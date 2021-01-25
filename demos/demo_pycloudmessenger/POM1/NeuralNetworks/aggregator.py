@@ -201,6 +201,7 @@ if __name__ == "__main__":
 
     display('Terminating all worker nodes.', logger, verbose)
     mn.terminate_Workers()
+    tm.print_lineage(display, user_name, user_password, task_name)
     tm.stop_task()
 
     display('----------------------------------------------------------------------', logger, verbose)

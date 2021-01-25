@@ -162,3 +162,37 @@ class Task_Manager:
 
         return workers
 
+
+
+    def print_lineage(self, display, user_name, user_password, task):
+
+        # context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer)
+
+        aggr_context = ffl.Factory.context('cloud', self.credentials_filename, user_name, user_password,
+                                              dispatch_threshold=0)
+        aggr_user = ffl.Factory.user(aggr_context)
+
+        result = aggr_user.model_lineage(task)
+
+        training_round = 0
+
+        display(f"{'Round':5} {'Date':30} {'Origin':20} {'Id':10} {'Contribution':20} {'Reward':10}")
+
+        for line in result:
+            if 'genre' in line:
+                if line['genre'] == 'INTERIM':
+                    training_round += 1
+                    display(f"{training_round:^5d} {line['added']:30} {'AGGREGATOR':20} " +
+                                f"{str(line['external_id'][-7:]):10}")
+                elif line['genre'] == 'COMPLETE':
+                    display(f"Done  {line['added']:30} {'AGGREGATOR':20} " +
+                                f"{str(line['external_id'][-7:]):10}")
+                else:
+                    display(f"{training_round:^5d} {line['added']:30} {line['participant']:20} " +
+                                f"{str(line['external_id'][-7:]):10} " +
+                                f"{str(line['contribution']):20} {str(line['reward']):10}")
+            else:
+                training_round += 1
+                display(f"{training_round:^5d} {line['added']:30} {line['metadata']:20} " +
+                            f"{str(''):10} " +
+                            f"{str(line['contribution']):20} {str(line['reward']):10}")
