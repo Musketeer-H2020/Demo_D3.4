@@ -53,7 +53,7 @@ class Task_Manager:
 
         # Create context for the cloud communications
         ffl.Factory.register(config, fflapi.Context, fflapi.User, fflapi.Aggregator, fflapi.Participant)
-        self.aggr_context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer)
+        self.aggr_context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer, dispatch_threshold=0)
 
         try:
             user = ffl.Factory.user(self.aggr_context)
@@ -89,7 +89,7 @@ class Task_Manager:
 
         # Create context for the cloud communications
         ffl.Factory.register(config, fflapi.Context, fflapi.User, fflapi.Aggregator, fflapi.Participant)
-        context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer)
+        context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer, dispatch_threshold=0)
 
         # Join task
         try:
