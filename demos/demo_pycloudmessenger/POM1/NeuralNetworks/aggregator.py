@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     tm = Task_Manager(credentials_filename)
     # We need the aggregator to build comms object
-    aggregator = tm.create_master_and_taskname(display, logger, task_definition, user_name=user_name, user_password=user_password, task_name=task_name)   
+    aggregator = tm.create_master_and_taskname(display, logger, task_definition, user_name=user_name, user_password=user_password, task_name=task_name)
     display('Waiting for the workers to join task name = %s' % tm.task_name, logger, verbose)
     tm.wait_for_workers_to_join(display, logger)
     # ==================================================
@@ -199,10 +199,11 @@ if __name__ == "__main__":
     # to be used for the demos. Use them at your own risk.
     plot_cm_seaborn(preds_tst, y, classes, 'NN confusion matrix in test set master', model_type, dataset_name, logger, verbose, normalize=True)
 
-    display('Terminating all worker nodes.', logger, verbose)
+    display('Terminating all worker nodes.', logger, True)
     mn.terminate_Workers()
-    tm.print_lineage(display, user_name, user_password, task_name)
     tm.stop_task()
+    tm.print_lineage(user_name, user_password, task_name, display, logger, verbose)
+
 
     display('----------------------------------------------------------------------', logger, verbose)
     display('------------------------- END MMLL Procedure -------------------------', logger, verbose)

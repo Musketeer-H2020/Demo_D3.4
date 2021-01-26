@@ -53,10 +53,10 @@ class Task_Manager:
 
         # Create context for the cloud communications
         ffl.Factory.register(config, fflapi.Context, fflapi.User, fflapi.Aggregator, fflapi.Participant)
-        context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer)
+        self.aggr_context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer)
 
         try:
-            user = ffl.Factory.user(context)
+            user = ffl.Factory.user(self.aggr_context)
             with user:
                 import json
                 result = user.create_task(task_name, ffl.Topology.star, task_definition)
@@ -66,7 +66,7 @@ class Task_Manager:
             import sys
             sys.exit()
  
-        self.aggregator = ffl.Factory.aggregator(context, task_name=task_name)
+        self.aggregator = ffl.Factory.aggregator(self.aggr_context, task_name=task_name)
         return self.aggregator
 
 
@@ -164,35 +164,35 @@ class Task_Manager:
 
 
 
-    def print_lineage(self, display, user_name, user_password, task):
+    def print_lineage(self, user_name, user_password, task, display, logger, verbose=False):
 
-        # context = ffl.Factory.context(config, self.credentials_filename, user_name, user_password, encoder=serializer.Base64Serializer)
-
-        aggr_context = ffl.Factory.context('cloud', self.credentials_filename, user_name, user_password,
-                                              dispatch_threshold=0)
+        # print(user_name, user_password, task)
+        aggr_context = ffl.Factory.context('cloud', self.credentials_filename, user_name, user_password)
         aggr_user = ffl.Factory.user(aggr_context)
 
-        result = aggr_user.model_lineage(task)
+        with aggr_user:
 
-        training_round = 0
+            result = aggr_user.model_lineage(task)
+            # print(result)
+            training_round = 0
 
-        display(f"{'Round':5} {'Date':30} {'Origin':20} {'Id':10} {'Contribution':20} {'Reward':10}")
+            display(f"{'Round':5} {'Date':30} {'Origin':20} {'Id':10} {'Contribution':20} {'Reward':10}", logger, verbose)
 
-        for line in result:
-            if 'genre' in line:
-                if line['genre'] == 'INTERIM':
-                    training_round += 1
-                    display(f"{training_round:^5d} {line['added']:30} {'AGGREGATOR':20} " +
-                                f"{str(line['external_id'][-7:]):10}")
-                elif line['genre'] == 'COMPLETE':
-                    display(f"Done  {line['added']:30} {'AGGREGATOR':20} " +
-                                f"{str(line['external_id'][-7:]):10}")
+            for line in result:
+                if 'genre' in line:
+                    if line['genre'] == 'INTERIM':
+                        training_round += 1
+                        display(f"{training_round:^5d} {line['added']:30} {'AGGREGATOR':20} " +
+                                    f"{str(line['external_id'][-7:]):10}", logger, verbose)
+                    elif line['genre'] == 'COMPLETE':
+                        display(f"Done  {line['added']:30} {'AGGREGATOR':20} " +
+                                    f"{str(line['external_id'][-7:]):10}", logger, verbose)
+                    else:
+                        display(f"{training_round:^5d} {line['added']:30} {line['participant']:20} " +
+                                    f"{str(line['external_id'][-7:]):10} " +
+                                    f"{str(line['contribution']):20} {str(line['reward']):10}", logger, verbose)
                 else:
-                    display(f"{training_round:^5d} {line['added']:30} {line['participant']:20} " +
-                                f"{str(line['external_id'][-7:]):10} " +
-                                f"{str(line['contribution']):20} {str(line['reward']):10}")
-            else:
-                training_round += 1
-                display(f"{training_round:^5d} {line['added']:30} {line['metadata']:20} " +
-                            f"{str(''):10} " +
-                            f"{str(line['contribution']):20} {str(line['reward']):10}")
+                    training_round += 1
+                    display(f"{training_round:^5d} {line['added']:30} {line['metadata']:20} " +
+                                f"{str(''):10} " +
+                                f"{str(line['contribution']):20} {str(line['reward']):10}", logger, verbose)
