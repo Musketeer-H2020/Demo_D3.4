@@ -95,7 +95,7 @@ if __name__ == "__main__":
     task_definition = {"quorum": Nworkers, 
                        "POM": pom, 
                        "model_type": model_type, 
-                       "Nmaxiter": 2, 
+                       "Nmaxiter": 3, 
                        "learning_rate": 0.0003,
                        "model_architecture": model_architecture,
                        "optimizer": 'adam',
