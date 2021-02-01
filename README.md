@@ -27,10 +27,13 @@ source venv/bin/activate
 
 Or if you only require pycloudmessenger, then:
 
-`pip install https://github.com/IBM/pycloudmessenger/archive/v0.6.0.tar.gz`
-
+`pip install https://github.com/IBM/pycloudmessenger/archive/v0.7.1.tar.gz`
 
 **IMPORTANT NOTE**: The pycloudmessenger package requires a credentials file to access the cloud service. Please, place this file at the `demos/demo_pycloudmessenger/` folder.
+
+## Input data
+
+The datasets needed to run these demos are located at [this link](https://drive.google.com/drive/folders/1-piNDL_tL6V4pCI-En02zeCEqoL-dUUu?usp=sharing). Please, download and place them in your local `input_data/` folder. 
 
 ## Usage
 
