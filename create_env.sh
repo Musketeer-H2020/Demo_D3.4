@@ -17,6 +17,4 @@ python3 -m pip install --upgrade pip
 echo "Now installing dependencies..."
 pip3 install -r requirements.txt --no-cache
 
-python3 generate_data.py
-
 echo "Please run 'source venv/bin/activate' to enable the virtual environment"
